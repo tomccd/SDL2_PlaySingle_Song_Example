@@ -9,6 +9,10 @@ extern "C"{
 #include <SDL2/SDL_mixer.h>
 #include <stdio.h>
 #include <iostream>
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
+
 int64_t getMp3Duration(const char* filename) {
     //Reference Link: https://stackoverflow.com/questions/6451814/how-to-use-libavcodec-ffmpeg-to-find-duration-of-video-file
     AVFormatContext* pFormatCtx = avformat_alloc_context();
@@ -18,7 +22,18 @@ int64_t getMp3Duration(const char* filename) {
     // etc
     avformat_close_input(&pFormatCtx);
     avformat_free_context(pFormatCtx);
-    return duration/AV_TIME_BASE;
+    return duration/AV_TIME_BASE; //seconds
+}
+std::string getMp3File(std::string dir){
+    if(fs::is_directory(dir)){
+        for(auto &file: fs::directory_iterator(dir)){
+            // std::cout << file.path() << std::endl;
+            if(file.path().extension() == ".mp3"){
+                return file.path().string();
+            }
+        }
+    }
+    return "";
 }
 int main(int argc, char *argv[]) {
     // Initialize SDL
@@ -34,22 +49,25 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    //Find
+    std::string filename = getMp3File("/home/tomccd/Downloads");
+    std::cout << filename << std::endl;
     // Load music
-    const char*filename = "../music.mp3";
-    Mix_Music *music = Mix_LoadMUS(filename);
+    Mix_Music *music = Mix_LoadMUS(filename.c_str());
     if (!music) {
         printf("Failed to load music! SDL_mixer Error: %s\n", Mix_GetError());
         Mix_Quit();
         SDL_Quit();
         return -1;
     }
-
+    int counterLoop = 0;
+    int loop = 2;
     // Play music
-    if (Mix_PlayMusic(music, 0) == 2) { // Loop indefinitely
+    if (Mix_PlayMusic(music, loop) == 2) { // Loop indefinitely
         printf("SDL_mixer Error: %s\n", Mix_GetError());
     }
     // Get Duration of Song in seconds
-    Uint32 duration = getMp3Duration(filename);
+    Uint32 duration = getMp3Duration(filename.c_str());
     std::cout << "Duration: " << duration << " s" << std::endl;
     // get time in milisecond since SDL2 was initialized (begin time)
     Uint32 begin_time = SDL_GetTicks(); 
@@ -58,8 +76,12 @@ int main(int argc, char *argv[]) {
     Uint32 finish_time = SDL_GetTicks();
     Uint32 previous_time = 0;
     //Keep playing song until it finishes
-    while((finish_time-begin_time)/1000 <= duration){
+    while(counterLoop < loop){
         finish_time = SDL_GetTicks();
+        if((finish_time-begin_time)/1000 >= duration){
+            begin_time = finish_time;
+            counterLoop++;
+        }
         if(finish_time-previous_time>1000){
             std::cout << "Seconds: " << (finish_time-begin_time)/1000 << " s" << std::endl;
             previous_time = finish_time;
