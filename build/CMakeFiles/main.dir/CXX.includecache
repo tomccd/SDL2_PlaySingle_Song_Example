@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tomccd/Code/C++/Play_Music/Single_Music/src/main.cpp
+libavformat/avformat.h
+-
+libavutil/opt.h
+-
+SDL2/SDL.h
+-
+SDL2/SDL_mixer.h
+-
+stdio.h
+-
+iostream
+-
+

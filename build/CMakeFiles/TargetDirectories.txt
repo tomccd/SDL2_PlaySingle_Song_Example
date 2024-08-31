@@ -1,0 +1,3 @@
+/home/tomccd/Code/C++/Play_Music/Single_Music/build/CMakeFiles/rebuild_cache.dir
+/home/tomccd/Code/C++/Play_Music/Single_Music/build/CMakeFiles/edit_cache.dir
+/home/tomccd/Code/C++/Play_Music/Single_Music/build/CMakeFiles/main.dir
