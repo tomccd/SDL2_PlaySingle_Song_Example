@@ -1,6 +1,6 @@
 //Using C Header to import C Library
 extern "C"{
-    //Ubuntu : sudo apt-get install libavformat-dev libavcodec-dev libavutil-dev
+    //Ubuntu : sudo apt-get install libavformat-dev libavcodec-dev libavutil-dev (ffmpeg)
     #include <libavformat/avformat.h>
     #include <libavutil/opt.h>
 }
@@ -78,7 +78,8 @@ int main(int argc, char *argv[]) {
     //Keep playing song until it finishes
     while(counterLoop < loop){
         finish_time = SDL_GetTicks();
-        if((finish_time-begin_time)/1000 >= duration){
+        if((finish_time-begin_time)/1000 > duration){
+            std::cout << "Loop " << counterLoop+0 << std::endl;
             begin_time = finish_time;
             counterLoop++;
         }
